@@ -1,8 +1,8 @@
-const RoutesConfig = {
+const ROUTES = {
     HOME: '/home',
     LOGIN: '/login',
     LOGOUT: 'logout',
     UPDATE: '/update',
 }
 
-module.exports = {ROUTES: RoutesConfig}
+module.exports = {ROUTES}

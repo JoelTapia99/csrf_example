@@ -1,16 +1,16 @@
 const express = require("express");
 const session = require("express-session");
 const flash = require("connect-flash-plus");
-const handlebars = require("express-handlebars");
 const {v4: uuid} = require("uuid");
 const cors = require("cors");
 const fs = require("fs");
 const {PORT} = require("./constants/config");
 const {login} = require("./middlewares/oauth");
-const {ROUTES} = require("./constants/routes.config");
+const {ROUTES} = require("./constants/routes");
 const {serverRun} = require("./helpers/logs.helper");
-const {SERVER_CONFIG} = require("./constants/session.config");
+const {SERVER_CONFIG} = require("./config/session.config");
 const {User} = require("./models/user.model");
+const {HANDLEBARS_CONFIG} = require("./config/handlebars.config");
 
 // =====================================================
 // ==============| START - GLOBAL CONFIG |==============
@@ -33,13 +33,10 @@ const _TOKENS = new Map();
 app.use(express.urlencoded({extended: true}));
 app.use(session(SERVER_CONFIG));
 app.use(flash());
-app.set("views", __dirname);
-app.engine("hbs", handlebars({
-    defaultLayout: "main",
-    layoutsDir: __dirname,
-    extname: ".hbs",
-}));
+app.set("views", './views');
+app.engine("hbs", HANDLEBARS_CONFIG);
 app.set("view engine", "hbs");
+app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
 
 // Login
 
@@ -62,17 +59,15 @@ const csrfToken = (sessionId) => {
 
 const csrf = (req, res, next) => {
     const token = req.body.csrf;
-    if (!token || !_TOKENS.get(req.sessionID).has(token)) {
-        res.status(422).send("CSRF Token missing or expired");
-    } else {
-        next();
-    }
+
+    if (!token || !_TOKENS.get(req.sessionID).has(token)) res.status(422).send("CSRF Token missing or expired");
+    else next();
 };
 
 
 // ==============| ROUTES |==============
 app.get(ROUTES.HOME, login, (req, res) => {
-    res.send("Home page, must be logged in to access");
+    res.render("landingpage");
 });
 
 app.get(ROUTES.LOGIN, (req, res) => {
@@ -122,7 +117,7 @@ app.post(ROUTES.UPDATE, login, csrf, (req, res) => {
 });
 
 app.get("*", (req, res) => res.redirect(ROUTES.HOME));
-app.get("/", (req, res) => res.redirect(ROUTES.HOME));
+// app.get("/", (req, res) => res.redirect(ROUTES.HOME));
 
 // =====================================================
 // ==============| RUN SERVER |==============
