@@ -1,6 +1,6 @@
 const serverRun = (port) => {
     console.log("=========================================")
-    console.log(`Server up in http://localhost:${port}/`)
+    console.log(`Target Server run in --> http://localhost:${port}/`)
     console.log("=========================================")
 }
 

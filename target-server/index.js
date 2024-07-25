@@ -102,12 +102,15 @@ app.get(ROUTES.LOGOUT, login, (req, res) => {
 });
 
 app.get(ROUTES.UPDATE, login, (req, res) => {
-    res.render("edit", {token: csrfToken(req.sessionID)});
+    // res.render("edit", {token: csrfToken(req.sessionID)});
+    res.render("edit");
 });
 
-app.post(ROUTES.UPDATE, login, csrf, (req, res) => {
-    const {userId, email} = req.body
-    const user = UserModel.findUserById(userId)
+app.post(ROUTES.UPDATE, login, (req, res) => {
+    const {email} = req.body
+    console.log(req.body)
+    const user = UserModel.findUserById(req.session.userId)
+    console.warn(user)
     user.email = email;
 
     console.log(`User ${user.id} email changed to ${user.email}`);
