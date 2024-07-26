@@ -61,7 +61,6 @@ app.get(ROUTES.HOME, login, (req, res) => {
   const id = _CURRENT_USER.id ?? req.query.id;
 
   if (!_CURRENT_USER || !id) res.redirect(ROUTES.LOGIN);
-  console.log(_CURRENT_USER, id)
 
   const user = UserModel.findUserById(id);
   res.render("landingpage", {
@@ -93,8 +92,8 @@ app.post(ROUTES.LOGIN, (req, res) => {
 
   req.session.userId = user.id;
   _TOKENS.set(req.sessionID, new Set());
+  console.log(req.headers.host);
 
-  console.log(req.session);
   _CURRENT_USER = user;
 
   res.redirect(`${ROUTES.HOME}?id=${user.id}`);
@@ -113,14 +112,11 @@ app.get(ROUTES.UPDATE, login, (req, res) => {
 
 app.post(ROUTES.UPDATE, login, (req, res) => {
   const { email } = req.body;
-  console.log(req.body);
   const user = UserModel.findUserById(req.session.userId);
-  console.warn(user);
   user.email = email;
 
   console.log(`User ${user.id} email changed to ${user.email}`);
   // fs.writeFileSync('db.json', JSON.stringify(users));
-
   res.redirect(`${ROUTES.HOME}?id=${user.id}`);
 });
 
