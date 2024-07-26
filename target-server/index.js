@@ -18,6 +18,7 @@ const {HANDLEBARS_CONFIG} = require("./config/handlebars.config");
 
 const app = express();
 const UserModel = new User()
+let _CURRENT_USER = null;
 const _TOKENS = new Map();
 
 // =====================================================
@@ -37,15 +38,6 @@ app.set("views", './views');
 app.engine("hbs", HANDLEBARS_CONFIG);
 app.set("view engine", "hbs");
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
-
-// Login
-
-// const login = (req, res, next) => {
-//   if (!req.session.userId) res.redirect("/login");
-//   else next();
-// };
-
-// CSRF
 
 
 const csrfToken = (sessionId) => {
@@ -67,7 +59,13 @@ const csrf = (req, res, next) => {
 
 // ==============| ROUTES |==============
 app.get(ROUTES.HOME, login, (req, res) => {
-    res.render("landingpage");
+    const id = _CURRENT_USER.id ?? req.query.id
+    const user = UserModel.findUserById(id)
+    res.render("landingpage", {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+    });
 });
 
 app.get(ROUTES.LOGIN, (req, res) => {
@@ -92,8 +90,11 @@ app.post(ROUTES.LOGIN, (req, res) => {
 
     req.session.userId = user.id;
     _TOKENS.set(req.sessionID, new Set());
+
     console.log(req.session);
-    res.redirect(ROUTES.HOME);
+    _CURRENT_USER = user
+
+    res.redirect(`${ROUTES.HOME}?id=${user.id}`);
 });
 
 app.get(ROUTES.LOGOUT, login, (req, res) => {
@@ -116,7 +117,7 @@ app.post(ROUTES.UPDATE, login, (req, res) => {
     console.log(`User ${user.id} email changed to ${user.email}`);
     // fs.writeFileSync('db.json', JSON.stringify(users));
 
-    res.send(`Email changed to ${user.email}`);
+    res.redirect(`${ROUTES.HOME}?id=${user.id}`);
 });
 
 app.get("*", (req, res) => res.redirect(ROUTES.HOME));

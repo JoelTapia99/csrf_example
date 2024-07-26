@@ -1,11 +1,12 @@
+{{> topbar}}
 {{> header}}
 
 <div class="card mx-5">
     <div class="card-body bg-light">
-        <form action="/edit" method="POST">
+        <form action="/update" method="POST">
             <div class="form-group">
                 <label for="exampleInputEmail1">New Email</label>
-                <input type="email" name="email" type="email" class="form-control mt-1" id="exampleInputEmail1"
+                <input type="email" name="email" class="form-control mt-1" id="exampleInputEmail1"
                        aria-describedby="emailHelp" placeholder="Enter email">
                        {{!-- <input type="hidden" name="csrf" value="{{ token }}"> --}}
             </div>

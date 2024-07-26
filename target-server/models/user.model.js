@@ -11,8 +11,7 @@ class User {
     }
 
     findUserById(id) {
-        console.log("id", id)
-        return this._users.find((user) => user.id === id);
+        return this._users.find((user) => user.id === Number(id));
     }
 }
 
