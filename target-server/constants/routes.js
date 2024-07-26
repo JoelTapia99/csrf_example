@@ -1,7 +1,7 @@
 const ROUTES = {
     HOME: '/home',
     LOGIN: '/login',
-    LOGOUT: 'logout',
+    LOGOUT: '/logout',
     UPDATE: '/update',
 }
 
