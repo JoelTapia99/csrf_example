@@ -106,11 +106,11 @@ app.get(ROUTES.LOGOUT, login, (req, res) => {
 });
 
 app.get(ROUTES.UPDATE, login, (req, res) => {
-  // res.render("edit", {token: csrfToken(req.sessionID)});
-  res.render("edit");
+  res.render("edit", {token: csrfToken(req.sessionID)});
+//   res.render("edit");
 });
 
-app.post(ROUTES.UPDATE, login, (req, res) => {
+app.post(ROUTES.UPDATE, login, csrf, (req, res) => {
   const { email } = req.body;
   const user = UserModel.findUserById(req.session.userId);
   user.email = email;
